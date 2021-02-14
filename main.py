@@ -3,12 +3,19 @@ import os
 
 
 def download_image(url, image_name, dest_folder='images'):
-    response = requests.get(url)
-    response.raise_for_status()
+    response = get_response(url)
 
     os.makedirs(dest_folder, exist_ok=True)
     with open(f'{dest_folder}/{image_name}', 'wb') as file:
         file.write(response.content)
+
+
+def get_response(url):
+    response = requests.get(url)
+    response.raise_for_status()
+    if response.ok:
+        return response
+    raise requests.HTTPError
 
 
 def main():
@@ -16,6 +23,7 @@ def main():
     image_name = 'hubble.jpeg'
 
     download_image(url, image_name)
+
 
 
 if __name__ == '__main__':
