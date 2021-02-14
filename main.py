@@ -18,16 +18,20 @@ def get_response(url):
     raise requests.HTTPError
 
 
-def main():
+def fetch_spacex_last_launch():
     response_spacex = get_response('https://api.spacexdata.com/v4/launches'
                                    '/latest')
 
     spacex_dict = response_spacex.json()
     spacex_links = spacex_dict['links']['flickr']['original']
-    
+
     for numb, image_url in enumerate(spacex_links, 1):
         image_name = f'spacex{numb}.jpg'
         download_image(image_url, image_name)
+
+
+def main():
+    fetch_spacex_last_launch()
 
 
 if __name__ == '__main__':
