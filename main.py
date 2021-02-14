@@ -1,6 +1,5 @@
 import requests
 import os
-import json
 
 
 def download_image(url, image_name, dest_folder='images'):
@@ -20,20 +19,15 @@ def get_response(url):
 
 
 def main():
-    # url = 'https://upload.wikimedia.org/wikipedia/commons/3/3f/HST-SM4.jpeg'
-    # image_name = 'hubble.jpeg'
-    #
-    # download_image(url, image_name)
-
     response_spacex = get_response('https://api.spacexdata.com/v4/launches'
                                    '/latest')
 
-    # with open('images/spacex_response.json', "w", encoding='utf8') as file:
-    #     json.dump(response_spacex.json(), file, ensure_ascii=False, indent=4)
-
     spacex_dict = response_spacex.json()
     spacex_links = spacex_dict['links']['flickr']['original']
-    print(spacex_links)
+    
+    for numb, image_url in enumerate(spacex_links, 1):
+        image_name = f'spacex{numb}.jpg'
+        download_image(image_url, image_name)
 
 
 if __name__ == '__main__':
