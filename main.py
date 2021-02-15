@@ -1,5 +1,6 @@
 import requests
 import os
+import urllib3
 
 
 def download_image(url, image_name, dest_folder='images'):
@@ -11,7 +12,8 @@ def download_image(url, image_name, dest_folder='images'):
 
 
 def get_response(url):
-    response = requests.get(url)
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+    response = requests.get(url, verify=False)
     response.raise_for_status()
     if response.ok:
         return response
@@ -22,8 +24,8 @@ def fetch_spacex_last_launch():
     response_spacex = get_response('https://api.spacexdata.com/v4/launches'
                                    '/latest')
 
-    spacex_dict = response_spacex.json()
-    image_links = spacex_dict['links']['flickr']['original']
+    spacex_images = response_spacex.json()
+    image_links = spacex_images['links']['flickr']['original']
 
     for numb, image_url in enumerate(image_links, 1):
         image_name = f'spacex{numb}.jpg'
@@ -35,17 +37,24 @@ def get_extension(url):
     return url_split[-1]
 
 
+def fetch_image_hubble(image_id):
+    response_hubble = get_response(
+        f'http://hubblesite.org/api/v3/image/{image_id}')
+
+    hubble_images = response_hubble.json()
+    image_links = hubble_images['image_files']
+
+    last_image = image_links[-1]
+    image_url = last_image['file_url'].replace('//', 'https://')
+    extension = get_extension(image_url)
+    image_name = f'{image_id}.{extension}'
+    download_image(image_url, image_name)
+
+
 def main():
     # fetch_spacex_last_launch()
 
-    response_hubble = get_response('http://hubblesite.org/api/v3/image/1')
-
-    hubble_dict = response_hubble.json()
-    image_links = hubble_dict['image_files']
-
-    for dict in image_links:
-        image_url = dict['file_url'].replace('//', 'https://')
-        print(get_extension(image_url))
+    fetch_image_hubble(1)
 
 
 if __name__ == '__main__':
