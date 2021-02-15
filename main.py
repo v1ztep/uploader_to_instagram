@@ -23,15 +23,23 @@ def fetch_spacex_last_launch():
                                    '/latest')
 
     spacex_dict = response_spacex.json()
-    spacex_links = spacex_dict['links']['flickr']['original']
+    image_links = spacex_dict['links']['flickr']['original']
 
-    for numb, image_url in enumerate(spacex_links, 1):
+    for numb, image_url in enumerate(image_links, 1):
         image_name = f'spacex{numb}.jpg'
         download_image(image_url, image_name)
 
 
 def main():
-    fetch_spacex_last_launch()
+    # fetch_spacex_last_launch()
+
+    response_hubble = get_response('http://hubblesite.org/api/v3/image/1')
+
+    hubble_dict = response_hubble.json()
+    image_links = hubble_dict['image_files']
+
+    for dict in image_links:
+        print(dict['file_url'].replace('//', 'https://'))
 
 
 if __name__ == '__main__':
