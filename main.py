@@ -30,6 +30,11 @@ def fetch_spacex_last_launch():
         download_image(image_url, image_name)
 
 
+def get_extension(url):
+    url_split = url.split('.')
+    return url_split[-1]
+
+
 def main():
     # fetch_spacex_last_launch()
 
@@ -39,7 +44,8 @@ def main():
     image_links = hubble_dict['image_files']
 
     for dict in image_links:
-        print(dict['file_url'].replace('//', 'https://'))
+        image_url = dict['file_url'].replace('//', 'https://')
+        print(get_extension(image_url))
 
 
 if __name__ == '__main__':
