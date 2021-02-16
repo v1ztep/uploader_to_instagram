@@ -51,10 +51,24 @@ def fetch_image_hubble(image_id):
     download_image(image_url, image_name)
 
 
+def get_hubble_image_ids(collection_name):
+    response = get_response(
+        'http://hubblesite.org/api/v3'
+        f'/images?page=all&collection_name={collection_name}')
+    collection = response.json()
+
+    image_ids = []
+    for image in collection:
+        image_ids.append(image['id'])
+    return image_ids
+
+
 def main():
     # fetch_spacex_last_launch()
 
-    fetch_image_hubble(1)
+    hubble_images_ids = get_hubble_image_ids('stsci_gallery')
+    for image_id in hubble_images_ids:
+        fetch_image_hubble(image_id)
 
 
 if __name__ == '__main__':
