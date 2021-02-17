@@ -104,7 +104,7 @@ def get_hubble_image_ids(collection_name):
 
 
 def upload_to_instagram(images_folder):
-    timeout = 10
+    timeout = 5
 
     username = os.getenv("USERNAME")
     password = os.getenv("PASSWORD")
