@@ -2,29 +2,50 @@ import requests
 from pathlib import Path
 import urllib3
 from PIL import Image
+from instabot import Bot
+import time
+from dotenv import load_dotenv
+import os
+import shutil
 
 
-def download_image(url, image_name, dest_folder='images'):
+def download_image(url, image_name, images_folder='images'):
     response = get_response(url)
 
-    Path(dest_folder).mkdir(parents=True, exist_ok=True)
-    image_path = Path(f'{dest_folder}/{image_name}')
+    Path(images_folder).mkdir(parents=True, exist_ok=True)
+    image_path = Path(f'{images_folder}/{image_name}')
     with open(image_path, 'wb') as file:
         file.write(response.content)
 
 
-def resize_image(dest_folder):
-    images_paths = list(Path(dest_folder).glob('*'))
+def resize_image(images_folder):
+    images_paths = list(Path(images_folder).glob('*'))
     if images_paths:
+        recomended_ratio = 1.91
+        maximum_side = 1080
         for img_path in images_paths:
             image = Image.open(img_path)
             width, height = image.size
+            ratio = width / height
 
-            if width > 1080 or height > 1080:
-                image.thumbnail((1080, 1080))
+            if ratio > recomended_ratio:
+                new_width = int(height * recomended_ratio)
+                left = int((width - new_width) / 2)
+                top = 0
+                right = int((width + new_width) / 2)
+                bottom = height
 
-            Path(img_path).unlink()
-            image.save(Path(img_path.parent,f'{img_path.stem}.jpg'))
+                image = image.crop((left, top, right, bottom))
+
+            if width > maximum_side or height > maximum_side:
+                image.thumbnail((maximum_side, maximum_side),
+                                        Image.ANTIALIAS)
+
+            new_file_path = Path(img_path.parent, f'{img_path.stem}.jpg')
+            image.save(new_file_path)
+
+            if new_file_path != img_path:
+                Path(img_path).unlink()
 
 
 def get_extension(url):
@@ -47,9 +68,10 @@ def fetch_spacex_last_launch():
 
     spacex_images = response_spacex.json()
     image_links = spacex_images['links']['flickr']['original']
+    payloads_name = spacex_images['name']
 
     for numb, image_url in enumerate(image_links, 1):
-        image_name = f'spacex{numb}.jpg'
+        image_name = f'{payloads_name}_{numb}.jpg'
         download_image(image_url, image_name)
 
 
@@ -59,11 +81,13 @@ def fetch_image_hubble(image_id):
 
     hubble_images = response_hubble.json()
     image_links = hubble_images['image_files']
+    photo_name = hubble_images['name']
 
     last_image = image_links[-1]
     image_url = last_image['file_url'].replace('//', 'https://')
     extension = get_extension(image_url)
-    image_name = f'{image_id}.{extension}'
+
+    image_name = f'{photo_name}.{extension}'
     download_image(image_url, image_name)
 
 
@@ -79,13 +103,61 @@ def get_hubble_image_ids(collection_name):
     return image_ids
 
 
-def main():
-    # fetch_spacex_last_launch()
+def upload_to_instagram(images_folder):
+    timeout = 10
 
-    # hubble_images_ids = get_hubble_image_ids('stsci_gallery')
-    # for image_id in hubble_images_ids:
-    #     fetch_image_hubble(image_id)
-    resize_image('images')
+    username = os.getenv("USERNAME")
+    password = os.getenv("PASSWORD")
+
+    try:
+        with open("posted_imgs.txt", "r", encoding="utf8") as file:
+            posted_img_list = file.read().splitlines()
+    except Exception:
+        posted_img_list = []
+
+    bot = Bot()
+    bot.login(username=username, password=password)
+
+    images_paths = list(Path(images_folder).glob('*.jpg'))
+
+    if images_paths:
+        images_names = {path.name for path in images_paths}
+        posted_names = set(posted_img_list)
+        unpublished_names = images_names.difference(posted_names)
+
+        if unpublished_names:
+            for name in unpublished_names:
+                caption = name.split('.')[0]
+                bot.upload_photo(Path(f'{images_folder}/{name}'),
+                                 caption=caption)
+                print("upload: " + name)
+
+                if bot.api.last_response.status_code != 200:
+                    print(bot.api.last_response)
+                    break
+
+                with open("posted_imgs.txt", "a", encoding="utf8") as file:
+                    file.write(name + "\n")
+
+                time.sleep(timeout)
+
+
+def main():
+    load_dotenv()
+    images_folder = 'images'
+
+    if Path('config').exists():
+        shutil.rmtree('config')
+
+    fetch_spacex_last_launch()
+
+    hubble_images_ids = get_hubble_image_ids('stsci_gallery')
+    for image_id in hubble_images_ids:
+        fetch_image_hubble(image_id)
+
+    resize_image(images_folder)
+
+    upload_to_instagram(images_folder)
 
 
 if __name__ == '__main__':
