@@ -168,10 +168,10 @@ def main():
 
     resize_image(images_folder)
 
-    # upload_to_instagram(images_folder)
-    #
-    # time.sleep(timeout)
-    # remove_uploaded(images_folder)
+    upload_to_instagram(images_folder)
+
+    time.sleep(timeout)
+    remove_uploaded(images_folder)
 
 
 if __name__ == '__main__':
