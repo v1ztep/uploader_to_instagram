@@ -23,29 +23,33 @@ def resize_image(images_folder):
     if images_paths:
         recomended_ratio = 1.91
         maximum_side = 1080
-        for img_path in images_paths:
-            image = Image.open(img_path)
+        for image_path in images_paths:
+            image = Image.open(image_path)
             width, height = image.size
             ratio = width / height
 
             if ratio > recomended_ratio:
-                new_width = int(height * recomended_ratio)
-                left = int((width - new_width) / 2)
-                top = 0
-                right = int((width + new_width) / 2)
-                bottom = height
-
-                image = image.crop((left, top, right, bottom))
+                image = trim_to_ratio(image, width, height, recomended_ratio)
 
             if width > maximum_side or height > maximum_side:
                 image.thumbnail((maximum_side, maximum_side),
-                                        Image.ANTIALIAS)
+                                Image.ANTIALIAS)
 
-            new_file_path = Path(img_path.parent, f'{img_path.stem}.jpg')
+            new_file_path = Path(image_path.parent, f'{image_path.stem}.jpg')
             image.save(new_file_path)
 
-            if new_file_path != img_path:
-                Path(img_path).unlink()
+            if new_file_path != image_path:
+                Path(image_path).unlink()
+
+
+def trim_to_ratio(image, width, height, recomended_ratio):
+    new_width = int(height * recomended_ratio)
+    left = int((width - new_width) / 2)
+    top = 0
+    right = int((width + new_width) / 2)
+    bottom = height
+    cropped_image = image.crop((left, top, right, bottom))
+    return cropped_image
 
 
 def get_extension(url):
@@ -142,22 +146,30 @@ def upload_to_instagram(images_folder):
                 time.sleep(timeout)
 
 
+def remove_uploaded(images_folder):
+    images_paths = list(Path(images_folder).glob('*.REMOVE_ME'))
+    if images_paths:
+        for image_path in images_paths:
+            Path(image_path).unlink()
+
+
 def main():
     load_dotenv()
     images_folder = 'images'
 
-    if Path('config').exists():
-        shutil.rmtree('config')
-
-    fetch_spacex_last_launch()
-
-    hubble_images_ids = get_hubble_image_ids('stsci_gallery')
-    for image_id in hubble_images_ids:
-        fetch_image_hubble(image_id)
+    # if Path('config').exists():
+    #     shutil.rmtree('config')
+    #
+    # fetch_spacex_last_launch()
+    #
+    # hubble_images_ids = get_hubble_image_ids('stsci_gallery')
+    # for image_id in hubble_images_ids:
+    #     fetch_image_hubble(image_id)
 
     resize_image(images_folder)
-
-    upload_to_instagram(images_folder)
+    #
+    # upload_to_instagram(images_folder)
+    # remove_uploaded(images_folder)
 
 
 if __name__ == '__main__':
