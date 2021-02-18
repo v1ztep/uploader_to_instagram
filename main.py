@@ -155,6 +155,7 @@ def remove_uploaded(images_folder):
 
 def main():
     load_dotenv()
+    timeout = 10
     images_folder = 'images'
 
     if Path('config').exists():
@@ -169,6 +170,8 @@ def main():
     resize_image(images_folder)
 
     upload_to_instagram(images_folder)
+
+    time.sleep(timeout)
     remove_uploaded(images_folder)
 
 
