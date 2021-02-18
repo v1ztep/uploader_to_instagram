@@ -53,8 +53,8 @@ def trim_to_ratio(image, width, height, recomended_ratio):
 
 
 def get_extension(url):
-    url_split = url.split('.')
-    return url_split[-1]
+    extension = url.split('.')[-1]
+    return extension
 
 
 def get_response(url):
