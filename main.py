@@ -110,8 +110,8 @@ def get_hubble_image_ids(collection_name):
 def upload_to_instagram(images_folder):
     timeout = 5
 
-    username = os.getenv("USERNAME")
-    password = os.getenv("PASSWORD")
+    username = os.getenv("INSTAGRAM_USERNAME")
+    password = os.getenv("INSTAGRAM_PASSWORD")
 
     try:
         with open("posted_imgs.txt", "r", encoding="utf8") as file:
@@ -157,19 +157,19 @@ def main():
     load_dotenv()
     images_folder = 'images'
 
-    # if Path('config').exists():
-    #     shutil.rmtree('config')
-    #
-    # fetch_spacex_last_launch()
-    #
-    # hubble_images_ids = get_hubble_image_ids('stsci_gallery')
-    # for image_id in hubble_images_ids:
-    #     fetch_image_hubble(image_id)
+    if Path('config').exists():
+        shutil.rmtree('config')
+
+    fetch_spacex_last_launch()
+
+    hubble_images_ids = get_hubble_image_ids('stsci_gallery')
+    for image_id in hubble_images_ids:
+        fetch_image_hubble(image_id)
 
     resize_image(images_folder)
-    #
-    # upload_to_instagram(images_folder)
-    # remove_uploaded(images_folder)
+
+    upload_to_instagram(images_folder)
+    remove_uploaded(images_folder)
 
 
 if __name__ == '__main__':
