@@ -1,4 +1,4 @@
-# Скачивание фотографий из SpaceX/Hubble API и автопубликация их в Instagram.
+# Скачивает фотографии из SpaceX/Hubble API и публикует их в Instagram.
 
 Скрипт скачивает фотографии последнего запуска SpaceX, а также снимки телескопа Hubble коллекции `stsci_gallery` 
 через [API SpaceX ](https://documenter.getpostman.com/view/2025350/RWaEzAiG#bc65ba60-decf-4289-bb04-4ca9df01b9c1) и 
