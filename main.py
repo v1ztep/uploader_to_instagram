@@ -60,9 +60,7 @@ def get_extension(url):
 def get_response(url):
     response = requests.get(url, verify=False)
     response.raise_for_status()
-    if response.ok:
-        return response
-    raise requests.HTTPError
+    return response
 
 
 def fetch_spacex_last_launch():
