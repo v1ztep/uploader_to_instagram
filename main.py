@@ -20,26 +20,26 @@ def download_image(url, image_name, images_folder='images'):
 
 def resize_image(images_folder):
     images_paths = list(Path(images_folder).glob('*'))
-    if images_paths:
+    for image_path in images_paths:
         recomended_ratio = 1.91
         maximum_side = 1080
-        for image_path in images_paths:
-            image = Image.open(image_path)
-            width, height = image.size
-            ratio = width / height
 
-            if ratio > recomended_ratio:
-                image = trim_to_ratio(image, width, height, recomended_ratio)
+        image = Image.open(image_path)
+        width, height = image.size
+        ratio = width / height
 
-            if width > maximum_side or height > maximum_side:
-                image.thumbnail((maximum_side, maximum_side),
-                                Image.ANTIALIAS)
+        if ratio > recomended_ratio:
+            image = trim_to_ratio(image, width, height, recomended_ratio)
 
-            new_file_path = Path(image_path.parent, f'{image_path.stem}.jpg')
-            image.save(new_file_path)
+        if width > maximum_side or height > maximum_side:
+            image.thumbnail((maximum_side, maximum_side),
+                            Image.ANTIALIAS)
 
-            if new_file_path != image_path:
-                Path(image_path).unlink()
+        new_file_path = Path(image_path.parent, f'{image_path.stem}.jpg')
+        image.save(new_file_path)
+
+        if new_file_path != image_path:
+            Path(image_path).unlink()
 
 
 def trim_to_ratio(image, width, height, recomended_ratio):
@@ -125,28 +125,26 @@ def upload_to_instagram(images_folder):
         posted_names = set(posted_img_list)
         unpublished_names = images_names.difference(posted_names)
 
-        if unpublished_names:
-            for name in unpublished_names:
-                caption = name.split('.')[0]
-                bot.upload_photo(Path(f'{images_folder}/{name}'),
-                                 caption=caption)
-                print("upload: " + name)
+        for name in unpublished_names:
+            caption = name.split('.')[0]
+            bot.upload_photo(Path(f'{images_folder}/{name}'),
+                             caption=caption)
+            print("upload: " + name)
 
-                if bot.api.last_response.status_code != 200:
-                    print(bot.api.last_response)
-                    break
+            if bot.api.last_response.status_code != 200:
+                print(bot.api.last_response)
+                break
 
-                with open("posted_imgs.txt", "a", encoding="utf8") as file:
-                    file.write(name + "\n")
+            with open("posted_imgs.txt", "a", encoding="utf8") as file:
+                file.write(name + "\n")
 
-                time.sleep(timeout)
+            time.sleep(timeout)
 
 
 def remove_uploaded(images_folder):
     images_paths = list(Path(images_folder).glob('*.REMOVE_ME'))
-    if images_paths:
-        for image_path in images_paths:
-            Path(image_path).unlink()
+    for image_path in images_paths:
+        Path(image_path).unlink()
 
 
 def main():
