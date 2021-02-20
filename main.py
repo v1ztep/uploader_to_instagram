@@ -144,7 +144,7 @@ def upload_to_instagram(images_folder):
 def remove_uploaded(images_folder):
     images_paths = list(Path(images_folder).glob('*.REMOVE_ME'))
     for image_path in images_paths:
-        Path(image_path).unlink()
+        image_path.unlink()
 
 
 def main():
