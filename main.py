@@ -19,7 +19,7 @@ def download_image(url, image_name, images_folder='images'):
 
 
 def resize_image(images_folder):
-    images_paths = list(Path(images_folder).glob('*'))
+    images_paths = Path(images_folder).glob('*')
     for image_path in images_paths:
         recomended_ratio = 1.91
         maximum_side = 1080
@@ -118,7 +118,7 @@ def upload_to_instagram(images_folder):
     bot = Bot()
     bot.login(username=username, password=password)
 
-    images_paths = list(Path(images_folder).glob('*.jpg'))
+    images_paths = Path(images_folder).glob('*.jpg')
 
     if images_paths:
         images_names = {path.name for path in images_paths}
@@ -142,7 +142,7 @@ def upload_to_instagram(images_folder):
 
 
 def remove_uploaded(images_folder):
-    images_paths = list(Path(images_folder).glob('*.REMOVE_ME'))
+    images_paths = Path(images_folder).glob('*.REMOVE_ME')
     for image_path in images_paths:
         image_path.unlink()
 
