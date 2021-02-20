@@ -1,12 +1,13 @@
-import requests
-from pathlib import Path
-import urllib3
-from PIL import Image
-from instabot import Bot
-import time
-from dotenv import load_dotenv
 import os
 import shutil
+import time
+from pathlib import Path
+
+import requests
+import urllib3
+from PIL import Image
+from dotenv import load_dotenv
+from instabot import Bot
 
 
 def download_image(url, image_name, images_folder='images'):
@@ -168,10 +169,10 @@ def main():
 
     resize_image(images_folder)
 
-    upload_to_instagram(images_folder)
+    # upload_to_instagram(images_folder)
 
-    time.sleep(timeout)
-    remove_uploaded(images_folder)
+    # time.sleep(timeout)
+    # remove_uploaded(images_folder)
 
 
 if __name__ == '__main__':
