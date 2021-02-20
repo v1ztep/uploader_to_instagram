@@ -13,7 +13,6 @@ from instabot import Bot
 def download_image(url, image_name, images_folder='images'):
     response = get_response(url)
 
-    Path(images_folder).mkdir(parents=True, exist_ok=True)
     image_path = Path(f'{images_folder}/{image_name}')
     with open(image_path, 'wb') as file:
         file.write(response.content)
@@ -59,7 +58,6 @@ def get_extension(url):
 
 
 def get_response(url):
-    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     response = requests.get(url, verify=False)
     response.raise_for_status()
     if response.ok:
@@ -156,7 +154,11 @@ def remove_uploaded(images_folder):
 def main():
     load_dotenv()
     timeout = 10
+
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
     images_folder = 'images'
+    Path(images_folder).mkdir(parents=True, exist_ok=True)
 
     if Path('config').exists():
         shutil.rmtree('config')
