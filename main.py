@@ -1,7 +1,9 @@
 import os
 import shutil
 import time
+from os.path import splitext
 from pathlib import Path
+from urllib.parse import urlsplit
 
 import requests
 import urllib3
@@ -53,7 +55,8 @@ def trim_to_ratio(image, width, height, recomended_ratio):
 
 
 def get_extension(url):
-    extension = url.split('.')[-1]
+    url_path = urlsplit(url).path
+    extension = splitext(url_path)[-1]
     return extension
 
 
@@ -87,7 +90,7 @@ def fetch_image_hubble(image_id):
     image_url = last_image_link['file_url'].replace('//', 'https://')
     extension = get_extension(image_url)
 
-    image_name = f'{photo_name}.{extension}'
+    image_name = f'{photo_name}{extension}'
     download_image(image_url, image_name)
 
 
