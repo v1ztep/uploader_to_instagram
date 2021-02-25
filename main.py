@@ -60,15 +60,15 @@ def get_extension(url):
     return extension
 
 
-def get_response(url):
-    response = requests.get(url, verify=False)
+def get_response(url, params=None):
+    response = requests.get(url, params, verify=False)
     response.raise_for_status()
     return response
 
 
 def fetch_spacex_last_launch():
-    spacex_response = get_response('https://api.spacexdata.com/v4/launches'
-                                   '/latest')
+    url = 'https://api.spacexdata.com/v4/launches/latest'
+    spacex_response = get_response(url)
 
     launch_details = spacex_response.json()
     image_links = launch_details['links']['flickr']['original']
@@ -80,8 +80,8 @@ def fetch_spacex_last_launch():
 
 
 def fetch_image_hubble(image_id):
-    hubble_response = get_response(
-        f'http://hubblesite.org/api/v3/image/{image_id}')
+    url = f'http://hubblesite.org/api/v3/image/{image_id}'
+    hubble_response = get_response(url)
 
     image_details = hubble_response.json()
     last_image_link = image_details['image_files'][-1]
@@ -95,9 +95,9 @@ def fetch_image_hubble(image_id):
 
 
 def get_hubble_image_ids(collection_name):
-    response = get_response(
-        'http://hubblesite.org/api/v3'
-        f'/images?page=all&collection_name={collection_name}')
+    url = 'http://hubblesite.org/api/v3/images'
+    params = {'page':'all', 'collection_name':{collection_name}}
+    response = get_response(url, params=params)
     image_details = response.json()
 
     image_ids = []
