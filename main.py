@@ -104,12 +104,7 @@ def get_hubble_image_ids(collection_name):
     return image_ids
 
 
-def upload_to_instagram(images_folder):
-    timeout = 5
-
-    username = os.getenv("INSTAGRAM_USERNAME")
-    password = os.getenv("INSTAGRAM_PASSWORD")
-
+def upload_to_instagram(images_folder, username, password, timeout):
     try:
         with open("posted_imgs.txt", "r", encoding="utf8") as file:
             posted_img_list = file.read().splitlines()
@@ -151,6 +146,8 @@ def remove_uploaded(images_folder):
 def main():
     load_dotenv()
     timeout = 10
+    username = os.getenv("INSTAGRAM_USERNAME")
+    password = os.getenv("INSTAGRAM_PASSWORD")
 
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -168,7 +165,7 @@ def main():
 
     resize_image(images_folder)
 
-    # upload_to_instagram(images_folder)
+    # upload_to_instagram(images_folder, username, password, timeout)
 
     # time.sleep(timeout)
     # remove_uploaded(images_folder)
