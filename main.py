@@ -96,7 +96,7 @@ def fetch_image_hubble(image_id):
 
 def get_hubble_image_ids(collection_name):
     url = 'http://hubblesite.org/api/v3/images'
-    params = {'page':'all', 'collection_name':{collection_name}}
+    params = {'page': 'all', 'collection_name': {collection_name}}
     response = get_response(url, params=params)
     image_details = response.json()
 
@@ -104,13 +104,8 @@ def get_hubble_image_ids(collection_name):
     return image_ids
 
 
-def upload_to_instagram(images_folder, username, password, timeout):
-    try:
-        with open("posted_imgs.txt", "r", encoding="utf8") as file:
-            posted_img_list = file.read().splitlines()
-    except Exception:
-        posted_img_list = []
-
+def upload_to_instagram(images_folder, username, password, timeout,
+                        posted_img_list):
     bot = Bot()
     bot.login(username=username, password=password)
 
@@ -145,17 +140,20 @@ def remove_uploaded(images_folder):
 
 def main():
     load_dotenv()
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
     timeout = 10
     username = os.getenv("INSTAGRAM_USERNAME")
     password = os.getenv("INSTAGRAM_PASSWORD")
 
-    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+    try:
+        with open("posted_imgs.txt", "r", encoding="utf8") as file:
+            posted_img_list = file.read().splitlines()
+    except Exception:
+        posted_img_list = []
 
     images_folder = 'images'
     Path(images_folder).mkdir(parents=True, exist_ok=True)
-
-    if Path('config').exists():
-        shutil.rmtree('config')
 
     fetch_spacex_last_launch()
 
@@ -165,10 +163,13 @@ def main():
 
     resize_image(images_folder)
 
-    # upload_to_instagram(images_folder, username, password, timeout)
-
-    # time.sleep(timeout)
-    # remove_uploaded(images_folder)
+    try:
+        upload_to_instagram(images_folder, username, password, timeout,
+                            posted_img_list)
+    finally:
+        remove_uploaded(images_folder)
+        if Path('config').exists():
+            shutil.rmtree('config')
 
 
 if __name__ == '__main__':
