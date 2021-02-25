@@ -70,9 +70,9 @@ def fetch_spacex_last_launch():
     spacex_response = get_response('https://api.spacexdata.com/v4/launches'
                                    '/latest')
 
-    launch_info = spacex_response.json()
-    image_links = launch_info['links']['flickr']['original']
-    payloads_name = launch_info['name']
+    launch_details = spacex_response.json()
+    image_links = launch_details['links']['flickr']['original']
+    payloads_name = launch_details['name']
 
     for numb, image_url in enumerate(image_links, 1):
         image_name = f'{payloads_name}_{numb}.jpg'
@@ -83,9 +83,9 @@ def fetch_image_hubble(image_id):
     hubble_response = get_response(
         f'http://hubblesite.org/api/v3/image/{image_id}')
 
-    hubble_info = hubble_response.json()
-    last_image_link = hubble_info['image_files'][-1]
-    photo_name = hubble_info['name']
+    image_details = hubble_response.json()
+    last_image_link = image_details['image_files'][-1]
+    photo_name = image_details['name']
 
     image_url = last_image_link['file_url'].replace('//', 'https://')
     extension = get_extension(image_url)
@@ -98,10 +98,10 @@ def get_hubble_image_ids(collection_name):
     response = get_response(
         'http://hubblesite.org/api/v3'
         f'/images?page=all&collection_name={collection_name}')
-    collection_info = response.json()
+    image_details = response.json()
 
     image_ids = []
-    for image in collection_info:
+    for image in image_details:
         image_ids.append(image['id'])
     return image_ids
 
