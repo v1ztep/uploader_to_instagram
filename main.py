@@ -67,10 +67,10 @@ def get_response(url):
 
 
 def fetch_spacex_last_launch():
-    response_spacex = get_response('https://api.spacexdata.com/v4/launches'
+    spacex_response = get_response('https://api.spacexdata.com/v4/launches'
                                    '/latest')
 
-    launch_info = response_spacex.json()
+    launch_info = spacex_response.json()
     image_links = launch_info['links']['flickr']['original']
     payloads_name = launch_info['name']
 
@@ -80,10 +80,10 @@ def fetch_spacex_last_launch():
 
 
 def fetch_image_hubble(image_id):
-    response_hubble = get_response(
+    hubble_response = get_response(
         f'http://hubblesite.org/api/v3/image/{image_id}')
 
-    hubble_info = response_hubble.json()
+    hubble_info = hubble_response.json()
     last_image_link = hubble_info['image_files'][-1]
     photo_name = hubble_info['name']
 
