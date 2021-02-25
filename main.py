@@ -82,12 +82,13 @@ def fetch_spacex_last_launch():
 def fetch_image_hubble(image_id):
     url = f'http://hubblesite.org/api/v3/image/{image_id}'
     hubble_response = get_response(url)
-
     image_details = hubble_response.json()
-    last_image_link = image_details['image_files'][-1]
-    photo_name = image_details['name']
 
-    image_url = last_image_link['file_url'].replace('//', 'https://')
+    last_image_details = image_details['image_files'][-1]
+    last_image_link = urlsplit(last_image_details['file_url'])
+    image_url = last_image_link._replace(scheme='https').geturl()
+
+    photo_name = image_details['name']
     extension = get_extension(image_url)
 
     image_name = f'{photo_name}{extension}'
@@ -105,7 +106,7 @@ def get_hubble_image_ids(collection_name):
 
 
 def upload_to_instagram(images_folder, username, password, timeout,
-                        posted_img_list):
+                        posted_imgs):
     bot = Bot()
     bot.login(username=username, password=password)
 
@@ -113,7 +114,7 @@ def upload_to_instagram(images_folder, username, password, timeout,
 
     if images_paths:
         images_names = {path.name for path in images_paths}
-        posted_names = set(posted_img_list)
+        posted_names = set(posted_imgs)
         unpublished_names = images_names.difference(posted_names)
 
         for name in unpublished_names:
@@ -148,9 +149,9 @@ def main():
 
     try:
         with open("posted_imgs.txt", "r", encoding="utf8") as file:
-            posted_img_list = file.read().splitlines()
+            posted_imgs = file.read().splitlines()
     except Exception:
-        posted_img_list = []
+        posted_imgs = []
 
     images_folder = 'images'
     Path(images_folder).mkdir(parents=True, exist_ok=True)
@@ -165,7 +166,7 @@ def main():
 
     try:
         upload_to_instagram(images_folder, username, password, timeout,
-                            posted_img_list)
+                            posted_imgs)
     finally:
         remove_uploaded(images_folder)
         if Path('config').exists():
