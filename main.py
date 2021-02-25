@@ -100,9 +100,7 @@ def get_hubble_image_ids(collection_name):
     response = get_response(url, params=params)
     image_details = response.json()
 
-    image_ids = []
-    for image in image_details:
-        image_ids.append(image['id'])
+    image_ids = [image['id'] for image in image_details]
     return image_ids
 
 
