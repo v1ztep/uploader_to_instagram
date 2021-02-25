@@ -147,14 +147,14 @@ def main():
     username = os.getenv("INSTAGRAM_USERNAME")
     password = os.getenv("INSTAGRAM_PASSWORD")
 
+    images_folder = 'images'
+    Path(images_folder).mkdir(parents=True, exist_ok=True)
+
     try:
         with open("posted_imgs.txt", "r", encoding="utf8") as file:
             posted_imgs = file.read().splitlines()
     except Exception:
         posted_imgs = []
-
-    images_folder = 'images'
-    Path(images_folder).mkdir(parents=True, exist_ok=True)
 
     fetch_spacex_last_launch()
 
