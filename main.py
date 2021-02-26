@@ -34,8 +34,7 @@ def resize_image(images_folder):
             image = trim_to_ratio(image, width, height, recomended_ratio)
 
         if width > maximum_side or height > maximum_side:
-            image.thumbnail((maximum_side, maximum_side),
-                            Image.ANTIALIAS)
+            image.thumbnail((maximum_side, maximum_side), Image.ANTIALIAS)
 
         new_file_path = Path(image_path.parent, f'{image_path.stem}.jpg')
         image.save(new_file_path)
