@@ -40,7 +40,7 @@ def resize_image(images_folder):
         image.save(new_file_path)
 
         if new_file_path != image_path:
-            Path(image_path).unlink()
+            image_path.unlink()
 
 
 def trim_to_ratio(image, width, height, recomended_ratio):
