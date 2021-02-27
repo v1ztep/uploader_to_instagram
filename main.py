@@ -20,7 +20,7 @@ def download_image(url, image_name, images_folder='images'):
         file.write(response.content)
 
 
-def resize_image(images_folder):
+def change_size_extension_image(images_folder):
     images_paths = Path(images_folder).glob('*')
     for image_path in images_paths:
         recomended_ratio = 1.91
@@ -152,7 +152,7 @@ def main():
     try:
         with open("posted_imgs.txt", "r", encoding="utf8") as file:
             posted_imgs = file.read().splitlines()
-    except Exception:
+    except FileNotFoundError:
         posted_imgs = []
 
     fetch_spacex_last_launch()
@@ -161,7 +161,7 @@ def main():
     for image_id in hubble_images_ids:
         fetch_image_hubble(image_id)
 
-    resize_image(images_folder)
+    change_size_extension_image(images_folder)
 
     try:
         upload_to_instagram(images_folder, username, password, timeout,
