@@ -122,8 +122,7 @@ def upload_to_instagram(images_folder, username, password, timeout,
                              caption=caption)
 
             if bot.api.last_response.status_code != 200:
-                print(bot.api.last_response)
-                break
+                raise requests.HTTPError('Failed upload photo')
 
             with open('posted_imgs.txt', 'a', encoding='utf8') as file:
                 file.write(f'{name}\n')
@@ -165,6 +164,8 @@ def main():
     try:
         upload_to_instagram(images_folder, username, password, timeout,
                             posted_imgs)
+    except requests.HTTPError as err:
+        print(f'Ошибка: {err}')
     finally:
         remove_uploaded(images_folder)
         if Path('config').exists():
