@@ -106,13 +106,13 @@ def get_hubble_image_ids(collection_name):
 
 def upload_to_instagram(images_folder, username, password, timeout,
                         posted_imgs):
-    bot = Bot()
-    bot.login(username=username, password=password)
-
     images_paths = Path(images_folder).glob('*.jpg')
 
     if not images_paths:
         return
+
+    bot = Bot()
+    bot.login(username=username, password=password)
 
     images_names = {path.name for path in images_paths}
     posted_names = set(posted_imgs)
