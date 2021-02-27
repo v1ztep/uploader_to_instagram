@@ -120,7 +120,6 @@ def upload_to_instagram(images_folder, username, password, timeout,
             caption = name.split('.')[0]
             bot.upload_photo(Path(f'{images_folder}/{name}'),
                              caption=caption)
-            print(f'upload: {name}')
 
             if bot.api.last_response.status_code != 200:
                 print(bot.api.last_response)
