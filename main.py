@@ -111,23 +111,24 @@ def upload_to_instagram(images_folder, username, password, timeout,
 
     images_paths = Path(images_folder).glob('*.jpg')
 
-    if images_paths:
-        images_names = {path.name for path in images_paths}
-        posted_names = set(posted_imgs)
-        unpublished_names = images_names.difference(posted_names)
+    if not images_paths:
+        return
 
-        for name in unpublished_names:
-            caption = name.split('.')[0]
-            bot.upload_photo(Path(f'{images_folder}/{name}'),
-                             caption=caption)
+    images_names = {path.name for path in images_paths}
+    posted_names = set(posted_imgs)
+    unpublished_names = images_names.difference(posted_names)
 
-            if bot.api.last_response.status_code != 200:
-                raise requests.HTTPError('Failed upload photo')
+    for name in unpublished_names:
+        caption = name.split('.')[0]
+        bot.upload_photo(Path(f'{images_folder}/{name}'), caption=caption)
 
-            with open('posted_imgs.txt', 'a', encoding='utf8') as file:
-                file.write(f'{name}\n')
+        if bot.api.last_response.status_code != 200:
+            raise requests.HTTPError('Failed upload photo')
 
-            time.sleep(timeout)
+        with open('posted_imgs.txt', 'a', encoding='utf8') as file:
+            file.write(f'{name}\n')
+
+        time.sleep(timeout)
 
 
 def remove_uploaded(images_folder):
