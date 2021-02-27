@@ -20,7 +20,7 @@ def download_image(url, image_name, images_folder='images'):
         file.write(response.content)
 
 
-def change_size_extension_image(images_folder):
+def fix_size_extension_images(images_folder):
     images_paths = Path(images_folder).glob('*')
     for image_path in images_paths:
         recomended_ratio = 1.91
@@ -161,7 +161,7 @@ def main():
     for image_id in hubble_images_ids:
         fetch_image_hubble(image_id)
 
-    change_size_extension_image(images_folder)
+    fix_size_extension_images(images_folder)
 
     try:
         upload_to_instagram(images_folder, username, password, timeout,
