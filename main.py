@@ -120,14 +120,14 @@ def upload_to_instagram(images_folder, username, password, timeout,
             caption = name.split('.')[0]
             bot.upload_photo(Path(f'{images_folder}/{name}'),
                              caption=caption)
-            print("upload: " + name)
+            print(f'upload: {name}')
 
             if bot.api.last_response.status_code != 200:
                 print(bot.api.last_response)
                 break
 
-            with open("posted_imgs.txt", "a", encoding="utf8") as file:
-                file.write(name + "\n")
+            with open('posted_imgs.txt', 'a', encoding='utf8') as file:
+                file.write(f'{name}\n')
 
             time.sleep(timeout)
 
@@ -143,14 +143,14 @@ def main():
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
     timeout = 10
-    username = os.getenv("INSTAGRAM_USERNAME")
-    password = os.getenv("INSTAGRAM_PASSWORD")
+    username = os.getenv('INSTAGRAM_USERNAME')
+    password = os.getenv('INSTAGRAM_PASSWORD')
 
     images_folder = 'images'
     Path(images_folder).mkdir(parents=True, exist_ok=True)
 
     try:
-        with open("posted_imgs.txt", "r", encoding="utf8") as file:
+        with open('posted_imgs.txt', 'r', encoding='utf8') as file:
             posted_imgs = file.read().splitlines()
     except FileNotFoundError:
         posted_imgs = []
