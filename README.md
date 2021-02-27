@@ -30,9 +30,7 @@ INSTAGRAM_PASSWORD=ВАШ_ПАРОЛЬ
 ```
 pip install -r requirements.txt
 ```
-- Запустите скрипт командой: 
+- Запустите скрипт командой:
 ```
 python main.py
 ```
-
-
