@@ -73,8 +73,8 @@ def fetch_spacex_last_launch():
     image_links = launch_details['links']['flickr']['original']
     payloads_name = launch_details['name']
 
-    for numb, image_url in enumerate(image_links, 1):
-        image_name = f'{payloads_name}_{numb}.jpg'
+    for num, image_url in enumerate(image_links, 1):
+        image_name = f'{payloads_name}_{num}.jpg'
         download_image(image_url, image_name)
 
 
