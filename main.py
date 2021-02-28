@@ -169,8 +169,7 @@ def main():
         print(f'Ошибка: {err}')
     finally:
         remove_uploaded(images_folder)
-        if Path('config').exists():
-            shutil.rmtree('config')
+        shutil.rmtree('config', ignore_errors=True)
 
 
 if __name__ == '__main__':
